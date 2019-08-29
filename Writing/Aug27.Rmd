@@ -7,4 +7,12 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Test commit
+```{r}
+cows <- read.csv("../Data/CH2_Cows.csv")
+
+SumStats <- summarise(group_by(cows, diet),
+                      n = n(),
+                      mean = mean(gain),
+                      sd = sd(gain))
+```
+
