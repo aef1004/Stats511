@@ -1,0 +1,77 @@
+---
+title: "STAT511 HW1"
+author: "Amy Fox"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+
+# Question 1: Describe the data in Problem 3.3
+
+## Code
+```{r}
+# read in the data
+lumber <- read.csv("../Data/OTT_Final/ASCII-comma/CH03/ex3-30.txt", quote = "'")
+
+# look at the structure of the data
+str(lumber)
+
+# print the histogram
+hist(lumber$Number, col = "grey", main = "Question 1A: Lumber Histogram")
+
+# find the average of the lumber data
+mean(lumber$Number)
+
+# find the median of the lumber data
+median(lumber$Number)
+
+```
+
+## Answer
+A) The histogram is shown above.
+B) The mean for the lumber data is `r mean(lumber$Number)`. The median for the lumber data is `r median(lumber$Number)`. 
+C) Based on the histogram, it appears as though the data is normally distributed because the data appears as though there is centered around a number (7 in this plot). Also, the rest of the data does not seem to be left- or right- skewed.
+
+# Question 2: Describe the data in Problem 3.7
+
+
+## Code
+```{r}
+# read in the survival data
+survival <- read.csv("../Data/OTT_Final/ASCII-comma/CH03/ex3-7.txt", quote = "'")
+
+# look at the structure of the data
+str(survival)
+
+# print the median and standard deviation of the Standard therapy
+mean(survival$StandardTherapy)
+sd(survival$StandardTherapy)
+
+# print the median and standard deviation of the New therapy
+mean(survival$NewTherapy)
+sd(survival$NewTherapy)
+
+# tidy data for median and mean of both of the therapies
+survival_tidy <- survival %>%
+  gather(key = Treatment, value = data) %>%
+  group_by(Treatment) %>%
+  summarise(mean = mean(data),
+            sd = sd(data))
+
+# print the boxplot
+boxplot(survival, main= "Question 2B: Boxplot of Therapies")
+
+```
+
+## Answer
+A) The Standard Therapy mean is `r mean(survival$StandardTherapy)` and standard deviation is `r sd(survival$StandardTherapy)`. The New Therapy mean is `r mean(survival$NewTherapy)` and standard deviation is `r sd(survival$NewTherapy)`.
+
+B) The boxplot is shown above.
+
