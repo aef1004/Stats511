@@ -59,7 +59,7 @@ mean(survival$NewTherapy)
 sd(survival$NewTherapy)
 
 # tidy data for median and mean of both of the therapies
-survival_tidy <- survival %>%
+survival %>%
   gather(key = Treatment, value = data) %>%
   group_by(Treatment) %>%
   summarise(mean = mean(data),
