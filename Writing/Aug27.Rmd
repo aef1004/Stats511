@@ -3,6 +3,13 @@ title: "Aug27"
 output: pdf_document
 ---
 
+
+Good info for R markdown special characters:
+
+http://pages.stat.wisc.edu/~jgillett/371/RStudio/RMarkdown.pdf
+https://gist.github.com/benmarwick/4fb6f222443493e3c864 
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
