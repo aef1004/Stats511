@@ -1,0 +1,153 @@
+---
+title: "STAT511 Hw2"
+author: "Amy Fox"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1
+## Assume that Z has a standard normal distribution. Compute the following.
+
+## A. P(Z $\le$ 0.64)
+```{r}
+pnorm(0.64)
+```
+## B. P(Z $\le$ -0.37)
+```{r}
+pnorm(-0.37)
+```
+
+## C. P(Z > 1.24)
+```{r}
+pnorm(1.24, lower.tail = FALSE)
+```
+
+## D. P(-0.37 $\le$ Z $\le$ 1.15)
+```{r}
+pnorm(1.15) - pnorm(-0.37)
+```
+
+## E. Find the value z such that P(Z $\le$ z) = 0.3300
+
+```{r}
+qnorm(0.3300)
+```
+
+## F. Find the value z such that P(Z > z) = 0.1841
+
+```{r}
+qnorm(0.1841, lower.tail = FALSE)
+```
+
+# Question 2
+## Assume that Y has a normal distribution with mean 5.4 and standard deviation 0.2. Compute the following.
+
+## A. P(Y $\le$ 5.7)
+```{r}
+pnorm(5.7, mean = 5.4, sd = 0.2)
+```
+
+## B. P(Y > 5.3)
+
+```{r}
+pnorm(5.3, mean = 5.4, sd = 0.2, lower.tail = FALSE)
+```
+
+## C. P(5.2 $\le$ Y $\le$ 5.5)
+
+```{r}
+pnorm(5.5, mean = 5.4, sd = 0.2) - pnorm(5.2, mean = 5.4, sd = 0.2)
+```
+
+## D. Find the value y such that P(Y $\le$ y) = 0.85.
+
+```{r}
+qnorm(0.85, mean = 5.4, sd = 0.2)
+```
+
+# Question 3
+## Let Y have a skewed distribution with $\mu$ = 80 and $\sigma$ = 5. Suppose a random sample of size n=100 is drawn from the population.
+
+## A. Give an interval with the property that at least 75% of the data will be in that interval. What rule did you use to determine the interval?
+
+Chebyshev's rule is used to determine the interval where for any distribution (non-normal), at least 75% of the data will lie within $\bar{y}$ ±  2s. In this case, the data will lie within 80 ± 10, therefore the internval is (70, 90)
+
+## B. Describe the distribution of $\bar{y}$. Give the mean, standard deviation and shape of the distribution. (3 pts)
+
+```{r}
+# standard deviation
+5/sqrt(100)
+```
+
+**Need to check the mean and if there is another calculation**
+
+The mean is 80. For non-normal data, the standard deviation is sigma/sqrt(n). The standard deviation is `r 5/sqrt(100)`, and the shape of the distribution is approaching normal because according to the Central Limit Theorem, as n increases, the distribution becomes close to normal.
+
+**Checked above with Ariel**
+
+# Question 4
+## A random sample of n=25 seeds from a particular bean population is obtained. The weight (g) of each seed is recorded. The data is available from Canvas as “Seeds.csv”.
+
+## Reminders: (1) Use read.csv() to import the data. (2) Use str() to check the data after importing. (3) Use $ or with() to access the Weight column!
+
+## A. Construct a histogram of the data. Also give the sample mean and sample standard deviation. (3 pts)
+```{r warning = FALSE}
+library(ggplot2)
+seed_data <- read.csv("../Data/Seeds.csv")
+
+# histogram of the data
+ggplot(seed_data, aes(Weight)) +
+  geom_histogram(bins = 5) +
+  ggtitle("Seed data") +
+  xlab("Weight") +
+  theme_classic()
+
+# mean
+mean(seed_data$Weight)
+
+# standard deviation
+sd(seed_data$Weight)
+```
+
+
+## B. Give a 95% confidence interval for $\mu$ (population mean seed weight).
+For a 95% confidence interval, $\alpha$ = 0.05 and $\alpha$/2 = 0.025.
+First t-$\alpha$/2 must be calculated. df = n-1 where n = 25
+```{r}
+# this is t-alpha/2
+qt(1-0.025, df = 25-1)
+
+mean(seed_data$Weight) + qt(1-0.025, df = 25-1)*(sd(seed_data$Weight)/sqrt(25))
+
+mean(seed_data$Weight) - qt(1-0.025, df = 25-1)*(sd(seed_data$Weight)/sqrt(25))
+
+# or I can do this...
+t.test(seed_data$Weight)
+```
+The CI is (`r mean(seed_data$Weight) - qt(1-0.025, df = 25-1)*(sd(seed_data$Weight)/sqrt(25))`, `r mean(seed_data$Weight) + qt(1-0.025, df = 25-1)*(sd(seed_data$Weight)/sqrt(25))`).
+
+## C. Interpret your confidence interval from part B.
+
+I am 95% confident that the true population mean of the seed weight is between 479g and 573g. 
+
+## D. Do you think the CI is valid? In other words, discuss whether assumptions satisfied.
+
+We must assume that this seed data is a random sample with independent observations. Further, the data must be normally distributed or have a large sample size. 
+
+We know that the data is a random sample as stated in the problem. The data also appears to be normally distributed as shown in the histogram.
+
+# Question 5
+
+## Describe how the following affect the width of the confidence interval (assuming everything else is held constant). Answer should be increase, decrease or stays the same.
+
+## A. Sample size increases.
+Decrease
+
+## B. Confidence level increases.
+Increase
+
+## C. Standard deviation increases.
+Increase
