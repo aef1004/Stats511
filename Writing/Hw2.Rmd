@@ -82,11 +82,8 @@ Chebyshev's rule is used to determine the interval where for any distribution (n
 5/sqrt(100)
 ```
 
-**Need to check the mean and if there is another calculation**
-
 The mean is 80. For non-normal data, the standard deviation is sigma/sqrt(n). The standard deviation is `r 5/sqrt(100)`, and the shape of the distribution is approaching normal because according to the Central Limit Theorem, as n increases, the distribution becomes close to normal.
 
-**Checked above with Ariel**
 
 # Question 4
 ## A random sample of n=25 seeds from a particular bean population is obtained. The weight (g) of each seed is recorded. The data is available from Canvas as “Seeds.csv”.
@@ -98,12 +95,7 @@ The mean is 80. For non-normal data, the standard deviation is sigma/sqrt(n). Th
 library(ggplot2)
 seed_data <- read.csv("../Data/Seeds.csv")
 
-# histogram of the data
-ggplot(seed_data, aes(Weight)) +
-  geom_histogram(bins = 5) +
-  ggtitle("Seed data") +
-  xlab("Weight") +
-  theme_classic()
+hist(seed_data$Weight)
 
 # mean
 mean(seed_data$Weight)
