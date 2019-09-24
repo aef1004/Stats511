@@ -1,0 +1,128 @@
+---
+title: "Hw4"
+author: "Amy Fox"
+date: "9/24/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1
+** The housing department in a large city wants to estimate the average rent for rent-controlled apartments in the city. They need to determine the number of renters to include in a survey in order to estimate the average rent to within $80 using a 95% confidence interval. From past surveys, the monthly charge for rent-controlled apartments ranged from $1600-$3200.**
+
+** A. Suppose that based on the previous survey, almost all (>99%) apartment rents fell within $1600-$3200. Use this information to “estimate” the standard deviation.** 
+```{r}
+
+```
+
+** B. Using the standard deviation from above, find the (minimum) sample size required to achieve a 95% ME < $80.** 
+```{r}
+
+```
+
+# Question 2
+
+**A national agency sets recommended daily allowances for many supplements. In particular, the allowance for zinc for adult men is 15 mg/day. The agency would like to determine if the average intake of zinc for adult men is greater than 15 mg/day. Suppose from a previous study they estimate the standard deviation to be 2 mg/day and they conjecture that the true population mean is 15.4 mg/day. The investigators plan to use a one-sample t-test with α=0.05.**
+
+** A. Find the power with n=120 for the scenario above.**
+```{r}
+
+```
+
+** B. If the standard deviation was smaller (less than 2) would the power be higher or lower than that calculated in part A?**
+```{r}
+
+```
+
+** C. If the sample size was larger (more than 120) would the power be higher or lower than that calculated in part A?**
+```{r}
+
+```
+
+** D. If we used α=0.01 (instead of 0.05), would the power be higher or lower than that calculated in part A?**
+```{r}
+
+```
+
+** E. Using a conjectured mean of 16 mg/day (instead of 15.4), would the power be higher or lower than that calculated in part A?**
+```{r}
+
+```
+
+** F. Return to the original scenario and find the sample size required to achieve 80% power. Remember to “round” up to an integer value.**
+```{r}
+
+```
+
+
+# Question 3
+
+** Use the data from Problem 5.27 which deals with lead concentrations in estuarine creeks.**
+
+**A. Construct a histogram, qqplot and run SW test of normality. What do you conclude about the normality of the data based on each of the criteria? Do the various plots and tests agree? (4 pts)**
+```{r}
+
+```
+
+** B. Give the sample mean and median for this data.**
+```{r}
+
+```
+
+** C. Use the sign test to test the null hypothesis that the median is equal to 30. Give the pvalue and make a conclusion.**
+```{r}
+
+```
+
+** D. Give a 95% confidence interval for the median. Note: For consistency, please report the “Upper Achieved CI”.**
+```{r}
+
+```
+
+** E. Give a (standard) 95% confidence interval for the mean.**
+```{r}
+
+```
+
+** F. It should be clear from the diagnostics in part A that the assumption of normality is not met. Hence the CI from previous question is suspect. Give a 95% bootstrap studentized confidence interval for the mean. Hint: See “Boot Example2”, but use a different value for set.seed.**
+```{r}
+
+```
+
+** G. Assuming that cumulative lead exposure is of interest, would the mean or the median be of more interest.**
+```{r}
+
+```
+
+
+# Question 4
+
+**Use the data from problem 6.6 which concerns dissolved oxygen readings for Above and Below town sites. Note: The values for the Below site do not match what is shown in the textbook.**
+
+**A. Construct the side-by-side boxplots and include them in your assignment.**
+```{r}
+
+```
+
+**B. Give the sample means and standard deviations for each site (Above and Below).**
+```{r}
+
+```
+
+**C. Considering the summary statistics from above, is the pooled variance t-test or WelchSatterthwaite t-test preferred here? Justify your response using the rule of thumb from the notes.**
+```{r}
+
+```
+
+**D. Without assuming equal variances, give the 95% confidence interval for the difference between the means. Based on this interval, can we conclude that there is a difference between the population means? Explain.**
+```{r}
+
+```
+
+**E. Run the Welch-Satterthwaite t-test to test H0: H0:µ1- µ2=0 versus a two-sided alternative. Give the p-value and conclusion.**
+```{r}
+
+```
+
