@@ -9,7 +9,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r warning=FALSE}
+```{r message = FALSE}
 library(dplyr)
 library(BSDA)
 library(boot)
@@ -18,9 +18,9 @@ library(tidyr)
 
 
 # Question 1
-** The housing department in a large city wants to estimate the average rent for rent-controlled apartments in the city. They need to determine the number of renters to include in a survey in order to estimate the average rent to within $80 using a 95% confidence interval. From past surveys, the monthly charge for rent-controlled apartments ranged from $1600-$3200.**
+**The housing department in a large city wants to estimate the average rent for rent-controlled apartments in the city. They need to determine the number of renters to include in a survey in order to estimate the average rent to within $80 using a 95% confidence interval. From past surveys, the monthly charge for rent-controlled apartments ranged from $1600-$3200.**
 
-** A. Suppose that based on the previous survey, almost all (>99%) apartment rents fell within $1600-$3200. Use this information to “estimate” the standard deviation.** 
+**A. Suppose that based on the previous survey, almost all (>99%) apartment rents fell within $1600-$3200. Use this information to “estimate” the standard deviation.** 
 
 The Empirical rule states that for normal distributions, >99% of the values will fall within the 3 standard deviations of the mean. Therefore, standard deviation = Range/6
 
@@ -29,7 +29,8 @@ The Empirical rule states that for normal distributions, >99% of the values will
 ```
 The estimated standard devation is $266.67.
 
-** B. Using the standard deviation from above, find the (minimum) sample size required to achieve a 95% ME < $80.** 
+
+**B. Using the standard deviation from above, find the (minimum) sample size required to achieve a 95% ME < $80.** 
 
 One-sample t-test
 ```{r}
@@ -40,34 +41,40 @@ ME <- qt(1-alpha/2, df = n-1)*sd/sqrt(n)
 data.frame(n, ME)
 ```
 Therefore, a sample size of at least 46 must be used.
+
 # Question 2
 
-**A national agency sets recommended daily allowances for many supplements. In particular, the allowance for zinc for adult men is 15 mg/day. The agency would like to determine if the average intake of zinc for adult men is greater than 15 mg/day. Suppose from a previous study they estimate the standard deviation to be 2 mg/day and they conjecture that the true population mean is 15.4 mg/day. The investigators plan to use a one-sample t-test with α=0.05.**
+**A national agency sets recommended daily allowances for many supplements. In particular, the allowance for zinc for adult men is 15 mg/day. The agency would like to determine if the average intake of zinc for adult men is greater than 15 mg/day. Suppose from a previous study they estimate the standard deviation to be 2 mg/day and they conjecture that the true population mean is 15.4 mg/day. The investigators plan to use a one-sample t-test with $\alpha$ =0.05.**
 
 ** A. Find the power with n=120 for the scenario above.**
 ```{r}
 power.t.test(n = 120, delta = 15.4-15, sd = 2, sig.level = 0.05, type = "one.sample", alternative = "one.sided")
 ```
 
-The power is 0.70.
+The power is 0.703.
 
-** B. If the standard deviation was smaller (less than 2) would the power be higher or lower than that calculated in part A?**
 
-The power would be higher.
-
-** C. If the sample size was larger (more than 120) would the power be higher or lower than that calculated in part A?**
+**B. If the standard deviation was smaller (less than 2) would the power be higher or lower than that calculated in part A?**
 
 The power would be higher.
 
-** D. If we used α=0.01 (instead of 0.05), would the power be higher or lower than that calculated in part A?**
+
+**C. If the sample size was larger (more than 120) would the power be higher or lower than that calculated in part A?**
+
+The power would be higher.
+
+
+**D. If we used $\alpha$ =0.01 (instead of 0.05), would the power be higher or lower than that calculated in part A?**
 
 The power would be lower.
 
-** E. Using a conjectured mean of 16 mg/day (instead of 15.4), would the power be higher or lower than that calculated in part A?**
+
+**E. Using a conjectured mean of 16 mg/day (instead of 15.4), would the power be higher or lower than that calculated in part A?**
 
 The power would be higher.
 
-** F. Return to the original scenario and find the sample size required to achieve 80% power. Remember to “round” up to an integer value.**
+
+**F. Return to the original scenario and find the sample size required to achieve 80% power. Remember to “round” up to an integer value.**
 ```{r}
 power.t.test(power = 0.8, delta = 15.4-15, sd = 2, sig.level = 0.05, type = "one.sample", alternative = "one.sided")
 ```
@@ -75,10 +82,11 @@ The sample size for 80% power should be 156.
 
 # Question 3
 
-** Use the data from Problem 5.27 which deals with lead concentrations in estuarine creeks.**
+**Use the data from Problem 5.27 which deals with lead concentrations in estuarine creeks.**
 
 **A. Construct a histogram, qqplot and run SW test of normality. What do you conclude about the normality of the data based on each of the criteria? Do the various plots and tests agree? (4 pts)**
-Not normally distributed
+
+
 ```{r}
 # read in data
 lead_data <- read.csv("../Data/OTT_Final/ASCII-comma/CH05/ex5-27.txt") %>%
@@ -97,32 +105,37 @@ All of the tests agree.
 
 The histogram is skewed to the right, so it does not look normally distributed. In the qqplot, the data does not sit on the linear line; the curvature supports non-normality. Because the p-value for the Sharpiro-Wilk Normality test < 0.05, we can assume that it is NOT normally distributed.
 
-** B. Give the sample mean and median for this data.**
+
+**B. Give the sample mean and median for this data.**
 ```{r}
 mean(lead_data$Lead)
 median(lead_data$Lead)
 ```
 The mean is 37.24 and the median is 32.
 
-** C. Use the sign test to test the null hypothesis that the median is equal to 30. Give the pvalue and make a conclusion.**
+
+**C. Use the sign test to test the null hypothesis that the median is equal to 30. Give the pvalue and make a conclusion.**
 H0: M = 30 
 HA: M $\neq$ 30
 ```{r}
 SIGN.test(lead_data$Lead, md = 30)
 ```
-The p-value is 0.6177. Because the p-value is greater than $\alpha$ =0.05, we fail to reject H0. Therefore, the median could be equal to 30.
+The p-value is 0.6177. Because the p-value is greater than $\alpha$ =0.05, we fail to reject H0. Therefore, the true median could be equal to 30.
 
-** D. Give a 95% confidence interval for the median. Note: For consistency, please report the “Upper Achieved CI”.**
+
+**D. Give a 95% confidence interval for the median. Note: For consistency, please report the “Upper Achieved CI”.**
 
 The 95% confidence interval for the median is (17, 41).
 
-** E. Give a (standard) 95% confidence interval for the mean.**
+
+**E. Give a (standard) 95% confidence interval for the mean.**
 ```{r}
 t.test(lead_data$Lead)
 ```
 The normal 95% confidence interval for the mean is (24.86, 49.62).
 
-** F. It should be clear from the diagnostics in part A that the assumption of normality is not met. Hence the CI from previous question is suspect. Give a 95% bootstrap studentized confidence interval for the mean. Hint: See “Boot Example2”, but use a different value for set.seed.**
+
+**F. It should be clear from the diagnostics in part A that the assumption of normality is not met. Hence the CI from previous question is suspect. Give a 95% bootstrap studentized confidence interval for the mean. Hint: See “Boot Example2”, but use a different value for set.seed.**
 ```{r}
 #Define the function
 mean.fun <- function (d, i)
@@ -138,9 +151,10 @@ results2 <- boot(data = lead_data$Lead, mean.fun, R = 1000)
 boot.ci(results2, type = "all")
 ```
 
-The studentized bootstrap confidence interval is (22.65, 57.63).
+The studentized bootstrap confidence interval is (27.65, 57.63).
 
-** G. Assuming that cumulative lead exposure is of interest, would the mean or the median be of more interest.**
+
+**G. Assuming that cumulative lead exposure is of interest, would the mean or the median be of more interest.**
 
 Because we're interested in the cumulative lead exposure, the mean would be of more interest.
 
@@ -160,6 +174,7 @@ oxygen_data <- read.csv("../Data/OTT_Final/ASCII-comma/CH06/ex6-6.txt") %>%
 boxplot(oxygen_data, main = "Oxygen Reading Boxplot")
 ```
 
+
 **B. Give the sample means and standard deviations for each site (Above and Below).**
 ```{r}
 
@@ -173,6 +188,7 @@ oxygen_data_tidy %>%
 
 ```
 
+
 **C. Considering the summary statistics from above, is the pooled variance t-test or WelchSatterthwaite t-test preferred here? Justify your response using the rule of thumb from the notes.**
 
 To determine if the pooled variance or Welch-Satterthwaite test should be used, I first calculate the ratio of standard devations. 
@@ -184,12 +200,14 @@ To determine if the pooled variance or Welch-Satterthwaite test should be used, 
 
 Because the ratio is greater than 2, we do not assume equal variances, and the Welch-Satterthwaite t-test should be used.
 
+
 **D. Without assuming equal variances, give the 95% confidence interval for the difference between the means. Based on this interval, can we conclude that there is a difference between the population means? Explain.**
 ```{r}
 t.test(oxygen_data_tidy$oxygen ~ oxygen_data_tidy$group, var.equal = FALSE)
 ```
 
-The 95% confidence interval without assuming equal variances is (-0.012, 0.372). Because 0 is included in this confidence interval, we fail to reject H0. Therefore, we condlue that there is not a difference between the true population means.
+The 95% confidence interval without assuming equal variances is (-0.012, 0.372). Because 0 is included in this confidence interval, we fail to reject H0. Therefore, we conclude that there is not a difference between the true population means.
+
 
 **E. Run the Welch-Satterthwaite t-test to test H0: H0:µ1- µ2=0 versus a two-sided alternative. Give the p-value and conclusion.**
 
