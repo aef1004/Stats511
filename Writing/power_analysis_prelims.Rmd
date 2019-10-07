@@ -1,0 +1,33 @@
+---
+title: "Power_analysis_Prelims"
+author: "Amy Fox"
+date: "10/7/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(stats)
+```
+
+# Aim 1
+
+**note: this sample size is required because I'm comparing placenta and amniotic fluid - if I'm looking at fetal lungs etc. I would technically only need 1 pregnant mouse per group, because the average litter size is 6-8**
+
+Two-sample power analysis
+H0: mu(aerosol) = mu(non-aerosol)
+HA: mu(aerosol) = mu(non-aerosol)
+
+n = ?
+delta = 5 (conjectured uA-u0)
+sd = 2 (conjectured sd)
+sig.level = 0.05
+power = 0.8?
+alternative = two.sided
+```{r}
+power.t.test(power = 0.9, delta = 5, sd = 2, sig.level = 0.05, alternative = "two.sided", type = "two.sample")
+```
+
