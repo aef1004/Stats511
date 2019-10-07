@@ -1,0 +1,59 @@
+---
+title: "Hw5"
+author: "Amy Fox"
+date: "10/7/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1
+
+**Refer to Problem 6.42 which deals with lung capacity of rats exposed to ozone. Note: For consistency, please calculate the differences as After – Before where needed.**
+
+**A. Calculate the mean and standard deviation for Before and After (separately).**
+```{r}
+
+```
+
+**B. Are the differences (After – Before for each rat) normally distributed? Support your answer by including a qqplot of differences in your assignment.**
+```{r}
+
+```
+
+**C. Is there sufficient evidence to support the research hypothesis that there is a difference in average lung capacity after ozone exposure? Use the paired t-test with α=0.05. Give the hypotheses, test statistic, p-value and conclusion. (4 pts)**
+```{r}
+
+```
+
+**D. Rerun the test from the previous question using the Wilcoxon Paired (Signed Rank) test. Give your p-value and conclusion. Use the wilcoxsign_test() function from the coin package with distribution = “exact”.**
+```{r}
+
+```
+
+# Question 2
+
+**Refer to problem 7.9 which deals with rebound coefficients of baseballs. The summary statistics are provided here for your convenience: n = 40, 𝑦̅ = 84.798, s = 2.684. The raw data is also available from the Ott & Longnecker companion site as “exp07-9.txt”. Note that Table 7 (chisquare) does not have information for df = 39, so use the qchisq() R function to calculate table values needed for parts C and D.**
+
+**A. Construct a boxplot of the data and include it in your assignment.**
+```{r}
+
+```
+
+**B. Using =0.01, test H0: µ ≥ 85 vs HA: µ < 85. Give the one-sided p-value and conclusion.**
+```{r}
+
+```
+
+**C. Construct a 99% CI for σ. Note: provide a standard “two-sided” CI here.**
+```{r}
+
+```
+
+**D. Using =0.01, test H0: σ ≤ 2 vs HA: σ > 2. Give your test statistic, rejection rule and conclusion. (4 pts)**
+```{r}
+
+```
+
