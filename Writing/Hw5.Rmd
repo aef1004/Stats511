@@ -1,59 +1,169 @@
 ---
-title: "Hw5"
+title: "Stats511 Hw5"
 author: "Amy Fox"
 date: "10/7/2019"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r message = FALSE}
+library(dplyr)
+library(tidyr)
+library(coin)
+```
+
 # Question 1
 
 **Refer to Problem 6.42 which deals with lung capacity of rats exposed to ozone. Note: For consistency, please calculate the differences as After – Before where needed.**
 
+
 **A. Calculate the mean and standard deviation for Before and After (separately).**
 ```{r}
+# read in data
+lung_capacity_data <- read.csv("../Data/OTT_Final/ASCII-comma/CH06/ex6-42.txt") %>%
+  rename(rat = `X.Rat.`,
+         before = `X.Before.`,
+         after = `X.After.`) %>%
+  mutate(diff = after - before,
+         sd_diff = sd(diff)) 
+
+lung_capacity_data %>%
+  gather(key = "time", value = "capacity", -rat) %>%
+  group_by(time) %>%
+  summarise(mean = mean(capacity),
+            sd = sd(capacity))
+
 
 ```
+
 
 **B. Are the differences (After – Before for each rat) normally distributed? Support your answer by including a qqplot of differences in your assignment.**
 ```{r}
 
-```
+qqnorm(lung_capacity_data$after - lung_capacity_data$before, main = "QQ Plot 
+       Before - After Data")
+qqline(lung_capacity_data$after - lung_capacity_data$before)
 
-**C. Is there sufficient evidence to support the research hypothesis that there is a difference in average lung capacity after ozone exposure? Use the paired t-test with α=0.05. Give the hypotheses, test statistic, p-value and conclusion. (4 pts)**
+shapiro.test(lung_capacity_data$diff)
+
+```
+It appears as if the data is mostly normally distributed based on the QQplots, however, there are a few points that could be outliers.  (I also performed a Shapiro Wilks test to confirm that the data is normally distributed. Because the p-value = 0.2689 > alpha = 0.05 we assume that it is normally distributed.)
+
+
+**C. Is there sufficient evidence to support the research hypothesis that there is a difference in average lung capacity after ozone exposure? Use the paired t-test with $\alpha$ =0.05. Give the hypotheses, test statistic, p-value and conclusion. (4 pts)**
+
+**Hypothesis**
+
+H0: $\mu$ (before) = $\mu$ (after)
+
+HA: $\mu$ (before) $\neq$  $\mu$ (after)
+
+**Test Statistic**
+
 ```{r}
+# test statistic and p-value
+t.test(lung_capacity_data$after, lung_capacity_data$before, paired = T)
+
+# another way to calculate test statistic
+d_line <- mean(lung_capacity_data$before) - mean(lung_capacity_data$after)
+s_d <- lung_capacity_data$sd_diff[1]
+n_d <- length(lung_capacity_data$diff)
+
+d_line/(s_d/sqrt(n_d))
 
 ```
+
+Test statistic: 3.885
+
+p-value: 0.0025
+
+Conclusion: Reject H0 because p-value = 0.0025 < $\alpha$ = 0.05. Therefore, the true difference between the means is not equal to 0.
+
 
 **D. Rerun the test from the previous question using the Wilcoxon Paired (Signed Rank) test. Give your p-value and conclusion. Use the wilcoxsign_test() function from the coin package with distribution = “exact”.**
-```{r}
 
+```{r}
+wilcoxsign_test(lung_capacity_data$after ~ lung_capacity_data$before, paired = T, distribution = "exact")
 ```
+
+Because the p-value = 0.004 < $\alpha$ = 0.05, we reject H0. Therefore, there is most likely a difference between the true mean lung capacity before and after ozone exposure.
+
 
 # Question 2
 
-**Refer to problem 7.9 which deals with rebound coefficients of baseballs. The summary statistics are provided here for your convenience: n = 40, 𝑦̅ = 84.798, s = 2.684. The raw data is also available from the Ott & Longnecker companion site as “exp07-9.txt”. Note that Table 7 (chisquare) does not have information for df = 39, so use the qchisq() R function to calculate table values needed for parts C and D.**
+**Refer to problem 7.9 which deals with rebound coefficients of baseballs. The summary statistics are provided here for your convenience: n = 40, $\bar{y}$ = 84.798, s = 2.684. The raw data is also available from the Ott & Longnecker companion site as “exp07-9.txt”. Note that Table 7 (chisquare) does not have information for df = 39, so use the qchisq() R function to calculate table values needed for parts C and D.**
+
 
 **A. Construct a boxplot of the data and include it in your assignment.**
 ```{r}
+baseball_data <- read.csv("../Data/OTT_Final/ASCII-comma/CH07/exp07-9.txt") %>%
+  rename(coefficient = `X.coefficient.`)
 
-```
+boxplot(baseball_data$coefficient, main = "Baseball Boxplot", ylab = "Rebound Coefficient")
+``` 
 
-**B. Using =0.01, test H0: µ ≥ 85 vs HA: µ < 85. Give the one-sided p-value and conclusion.**
+
+**B. Using $\alpha$ = 0.01, test H0: µ $\geq$ 85 vs HA: µ < 85. Give the one-sided p-value and conclusion.**
+
 ```{r}
-
+t.test(baseball_data$coefficient, alternative = "less", mu = 85)
 ```
 
-**C. Construct a 99% CI for σ. Note: provide a standard “two-sided” CI here.**
+Because the p-value = 0.318 > $\alpha$ = 0.01, we fail to reject H0. Thus, the true mean is most likely greater than or equal to 85.
+
+
+**C. Construct a 99% CI for $\sigma$. Note: provide a standard “two-sided” CI here.**
+
 ```{r}
+alpha = 0.01
+n = 40
+s = 2.684
+
+chi_1 <- qchisq(alpha/2, df = 39) 
+chi_2 <- qchisq(1-(alpha/2), df = 39) 
+
+# one CI bound
+sqrt(((n-1)*s^2)/chi_1)
+
+# second CI bound
+sqrt(((n-1)*s^2)/chi_2)
 
 ```
+CI = (2.07, 3.74)
 
-**D. Using =0.01, test H0: σ ≤ 2 vs HA: σ > 2. Give your test statistic, rejection rule and conclusion. (4 pts)**
+
+**D. Using $\alpha$ = 0.01, test H0: $\sigma$ $\leq$ 2 vs HA: $\sigma$ > 2. Give your test statistic, rejection rule and conclusion. (4 pts)**
+By hand
+
+**Test Statistic**
+
 ```{r}
+alpha = 0.01
+n = 40
+s = 2.684
+sigma_0 = 2
+
+(n-1)*s^2/(sigma_0^2)
 
 ```
 
+Test statistic = 70.2
+
+**Rejection rule**
+```{r}
+df = n-1
+
+qchisq(1-alpha, df)
+```
+
+Rejection region = 62.4
+
+**Conclusion**
+Because Chi^2 = 70.2 > 62.4 = Chi^2 alpha, n-1
+
+Reject H0
+
+Therefore, the true standard deviation is greater than 2.
