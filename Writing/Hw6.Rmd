@@ -1,0 +1,187 @@
+---
+title: "Stat511 Hw6"
+author: "Amy Fox"
+date: "10/14/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message = FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(car)
+library(emmeans)
+library(multcomp)
+```
+
+# Question 1
+
+**In an investigation of the possible influence of dietary chromium on diabetic symptoms, 14 rats were fed a low-chromium diet and 10 were fed a control diet. One response variable was activity of the liver enzyme GITH. The data is available as “RatLiver.csv”.**
+
+**A. Construct side-by-side boxplots of the data.**
+```{r}
+rat_liver_data <- read_csv("../Data/RatLiver.csv") %>%
+  mutate(Trt = as.factor(Trt))
+
+ggplot(rat_liver_data, aes(x = Trt, y = Enzyme)) +
+  geom_boxplot() +
+  ggtitle("Rat Liver Boxplot")
+
+```
+
+**B. Use the F-test to test for equality of variances. Give the null hypothesis, test statistic, p-value and conclusion. (4 pts)**
+
+Null Hypothesis
+
+H0: $\sigma$~1~^2^ = $\sigma$~2~^2^ 
+
+HA: $\sigma$~1~^2^ $\neq$ $\sigma$~2~^2^
+
+df1 = Ctrl = 10
+
+df2 = LowChr = 14
+```{r}
+rat_liver_data %>%
+  group_by(Trt) %>%
+  summarise(sd = sd(Enzyme))
+
+var.test(Enzyme ~ Trt, data = rat_liver_data)
+```
+Test statistic: 0.78978
+
+The p-value = 0.74 > 0.05 = $\alpha$. Therefore, we fail to reject H0. We can thus conclude that the true variances are most likely equal.
+
+**C. Use Levene’s test (with center=”median”) to test for equality of variances. Give the p-value and conclusion.**
+```{r}
+leveneTest(Enzyme ~ Trt, data = rat_liver_data, center = "median")
+```
+The p-value is 0.68. Because the p-value = 0.68 > 0.05 = $\alpha$ we fail to reject H0. Therefore, the true variances are most likely equal.
+
+**D. Based on your conclusions from the two previous questions, would the pooled variance t-test or Welch-Satterthwaite t-test be preferred?**
+
+Because the two previous questions have shown that the true variances are most likely equal, a pooled variance test would be preferred. (The Welch-Satterthwaite is used in cases of unequal variances.)
+
+**E. Regardless of your answer to the previous question, run a two-sample t-test assuming equal variances. Give the null hypothesis, test statistic, p-value and conclusion. (4 pts)**
+
+Null Hypothesis
+
+H0: $\mu$~Ctrl~ = $\mu$~LowChr~
+
+HA: $\mu$~Ctrl~ $\neq$ $\mu$~LowChr~
+
+```{r}
+t.test(Enzyme ~ Trt, data = rat_liver_data, alternative = "two.sided", var.equal = TRUE)
+```
+Test statistic: 2.17
+
+p-value: 0.041
+
+Conclusion: Because p-value = 0.041 < 0.05 = $\alpha$, we reject H0. Thus, we conclude that the true difference in means is not equal to 0.
+
+**F. Rerun the analysis as a one-way ANOVA. Give the ANOVA table in your assignment. Compare your results to the previous question and notice that the p-value is the same and F = t2.**
+```{r}
+library(broom)
+aov(Enzyme ~ Trt, data = rat_liver_data)
+
+# or 
+lm(Enzyme ~ Trt, data = rat_liver_data) %>%
+  anova() %>%
+  tidy()
+```
+The p-values are the same between the ANOVA and two-sample t test. Further, the F statistic in this anova table is equal to t-statistic^2^ in the t-test.
+
+F = t^2^ 
+
+4.71 = 2.17^2
+
+# Question 2
+
+**Read Problem 8.32 which concerns corn yield. The data is available as “CornYield.csv”.**
+
+**A. Construct a bar plot showing means and SEs for each variety. (4 pts)**
+```{r}
+corn_data <- read_csv("../Data/CornYield.csv")
+
+Sum_stats <- corn_data %>%
+  group_by(Variety) %>%
+  summarise(n  = n(),
+            mean = mean(Yield),
+            sd = sd(Yield),
+            se = sd/sqrt(n))
+
+ggplot(Sum_stats, aes(x = Variety, y = mean, fill = Variety)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se)) +
+  ggtitle("Corn Yield Data")
+```
+
+**B. Carry out a one-way ANOVA analysis to determine whether there is evidence of differences (using $\alpha$ = 0.05) in the mean yield for the different varieties. State the null hypothesis, give the test statistic, p-value and conclusion. (4 pts)**
+
+**Null Hypothesis**
+
+H0: $\mu$~A~ = $\mu$~B~ = $\mu$~C~ = $\mu$~D~
+
+HA: there is one or more difference (not all of the $\mu$ are equal)
+```{r}
+lm(Yield ~ Variety, data = corn_data) %>%
+  anova()
+```
+Test Statistic: 11.05
+
+p-value: 5.85 x 10^-5^
+
+Conclusion: Because the p-value is < $\alpha$, we reject H0. Thus, there is at least one difference between the true means.
+
+
+**C. Run (unadjusted) pairwise comparisons of means. Give the estimated difference and p-value for each comparison. (4 pts)**
+```{r}
+lm(Yield ~ Variety, data = corn_data) %>%
+  emmeans(pairwise ~ Variety, adjust = "none") 
+```
+The estimated differences and p-values are in the $contast part of the table in the columns "estimate" and "p-value" respectively.
+
+**D. Calculate the LSD(0.05) value. Recall that this is the 95% ME for pairwise comparisons of means.**
+
+S~W~ = sqrt(MSResid) = sqrt(0.19978) (taken from anova analysis)
+
+LSD~0.05~ = t~$\alpha$/2~ x S~W~ x sqrt(2/n)
+t~0.05/2~ x sqrt(0.19978) x sqrt(2/8)
+
+```{r }
+df_resid <- sum(Sum_stats$n) - nrow(Sum_stats)
+t_alpha <- qt(1-0.05/2, df = df_resid)
+
+t_alpha * sqrt(0.19978) * sqrt(2/8)
+```
+The LSD(0.05) is 0.458
+
+**E. Construct an (unadjusted) “cld” display including the mean for each variety and assigning number groups (or underlining) varieties that are not “significantly” different. (4 pts)**
+```{r warning=FALSE}
+corn_lm <- lm(Yield ~ Variety, data = corn_data)
+corn_pairwise <-  emmeans(corn_lm, pairwise ~ Variety,  adjust = "none") 
+
+CLD(corn_pairwise$emmeans, adjust = "none")
+```
+
+**F. Summarize your findings from parts C and E.**
+
+The findings from C and E agree that there is not a difference in means between varieties D-A and varietes B-C.
+
+Using part C, the only p-values greater than 0.05 are the ones comparing D to A and comparing B to C. This means that we fail to reject H0 and assume that there is not a difference between means between these groups.
+
+Using CLD in part E, we can see there there is not a "significant" difference (less than $\alpha$ = 0.05) between 1) variety D and A and between 2) variety B and C.
+
+B & C have heigher yields than D & A based on the boxplots and this data.
+
+**G. Use the plot() function to generate the diagnostic plots from the model from part B. You do not have to include the graphs in your assignment, but discuss the plots of (1) Residuals vs Fitted values and (2) qqplot of residuals and whether assumptions appear to be satisfied based on each plot. (4 pts)**
+```{r message= FALSE}
+par(mfrow = c(2,2))
+plot(corn_lm)
+```
+Based on the residuals vs. fitted values plot, the scatter looks about equal, which supports the assumption of equal variances. (data has equal variances)
+
+Based on the qqplot of residuals, it looks like most of the points fall on the linear line, therefore, this supports the assumption of normality. (data is normal)
