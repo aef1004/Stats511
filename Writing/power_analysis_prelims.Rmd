@@ -13,9 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(stats)
 ```
 
-# Aim 1
+# Aim 1.1
 
-**note: this sample size is required because I'm comparing placenta and amniotic fluid - if I'm looking at fetal lungs etc. I would technically only need 1 pregnant mouse per group, because the average litter size is 6-8**
+**Note: This sample size is required because I'm comparing placenta and amniotic fluid - if I'm looking at fetal lungs etc. I would technically only need 1 pregnant mouse per group, because the average litter size is 6-8**
 
 Two-sample power analysis
 H0: mu(aerosol) = mu(non-aerosol)
@@ -25,9 +25,76 @@ n = ?
 delta = 5 (conjectured uA-u0)
 sd = 2 (conjectured sd)
 sig.level = 0.05
-power = 0.8?
+power = 0.9
 alternative = two.sided
 ```{r}
-power.t.test(power = 0.9, delta = 5, sd = 2, sig.level = 0.05, alternative = "two.sided", type = "two.sample")
+power.t.test(power = 0.9, delta = 5, sd = 2, sig.level = 0.05, alternative = "two.sided", type = "one.sample")
+```
+# Aim 1.2 
+For the correlation coefficients:
+(online calculator for Spearman specifically, n = 11.5 --> round up to 12)
+
+Using 4 groups 4 mice per group, 5 timepoints
+Plot with the smallest 
+```{r}
+library(pwr)
+pwr.r.test(n = 16, r = 0.8, sig.level = 0.05)
+pwr.r.test(r = 0.8, sig.level = 0.05, p = 0.9)
+```
+
+Redo the calculations because now using one-sample, two-sided Mann-Whitney
+H0: mu = 0
+HA: mu $\neq$ 0 
+
+
+
+```{r}
+library(wmwpow)
+wmwpowd(n = 5, m = 0, distn = 5, distm = 0, sides = "two.sided")
+```
+
+# Aim 2
+
+Power test for 2.1 (testing presence of microbiota)
+```{r}
+power.t.test(delta = 10, sd = 4, power = 0.9, alternative = "one.sided")
+```
+
+
+OTU counts: 
+```{r}
+library(readxl)
+sample_micro <- read_xlsx("../Data/data_from_microbiome_paper.xlsx")
+
+lm_fit <- lm(OTUs ~ Sample, data = sample_micro)
+
+# withing-group variance
+anova(lm_fit)["Residuals", "Mean Sq"]
+
+anova(lm_fit)["group", "Mean Sq"]
+
+
+C <- sample_micro %>%
+  filter(Sample == "C1" | Sample == "C2" | Sample == "C3" | Sample == "C4" | Sample == "C5") %>%
+  mutate(within_C = var(OTUs))
+
+B <- sample_micro %>%
+  filter(Sample == "B1" | Sample == "B2" | Sample == "B3" | Sample == "B4" | Sample == "B5") %>%
+  mutate(within_B = var(OTUs)) 
+
+M <- sample_micro %>%
+  filter(Sample == "M1" | Sample == "M2" | Sample == "M3" | Sample == "M4" | Sample == "M5") %>%
+  mutate(within_M = var(OTUs)) 
+
+C
+B
+M
+
+# within variance
+mean(361737.3, 114828.3, 43546.3)
+
+
+
+power.anova.test(groups = 4, between.var = 3617370, within.var = 361737, sig.level = 0.05, power = 0.9)
 ```
 
