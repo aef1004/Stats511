@@ -1,0 +1,200 @@
+---
+title: "STAT 511 Hw7"
+author: "Amy Fox"
+date: "10/20/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load necessary packages
+```{r message=FALSE}
+library(tidyverse)
+library(emmeans)
+library(dunn.test)
+library(car)
+```
+
+# Question 1
+
+**Read Problem 8.23 which concerns power plant reliability. This data is available from the Ott&Longnecker companion site. Note that the data is in “wide” format. In order to “transpose” the data to “long” format you can use the following code (assumes the original data is called InData after importing):**
+
+** Note for parts C and D: plots do NOT need to be included in your assignment, just discuss. However, p-values from Levene’s test and Shapiro-Wilk test should be included in your assignment.**
+
+```{r}
+power_plant_data <- read.csv("../Data/OTT_Final/ASCII-comma/CH08/ex8-23.txt") %>%
+  rename(A = X.A.,
+         B = X.B.,
+         C = X.C.,
+         D = X.D.,
+         E = X.E.,
+         F = X.F.,
+         G = X.G.) %>%
+  gather(key = "Plant", value = "EDG") %>%
+  mutate(Plant = as.factor(Plant))  %>%
+ mutate(Plant = fct_relevel(Plant, "G"))
+
+```
+
+**A. Create side-by-side boxplots and include then in your assignment.**
+```{r warning = FALSE}
+ggplot(power_plant_data, aes(x = Plant, y = EDG)) +
+  geom_boxplot() +
+  ggtitle("Power Plant Boxplot")
+```
+
+**B. Run the one-way ANOVA on the original scale. Include the ANOVA table in your assignment.**
+```{r}
+One_way_aov_power_plant <- lm(EDG ~ Plant, data = power_plant_data)
+
+anova(One_way_aov_power_plant)
+```
+
+**C. Do the assumptions for one-way ANOVA appear to be satisfied for these data? In order to justify your response, consider residual diagnostic plots, Levene’s test (using default center = “median”) and Shapiro-Wilk test results. (4 pts)**
+```{r}
+# residual diagnostic plots
+par(mfrow = c(2,2))
+plot(One_way_aov_power_plant)
+```
+Based on the Residuals vs. Fitted, it does not appear as if there are equal variances.  The Q-Q plots also show that the residuals are not normally distributed. Therefore, the assumptions for on-way ANOVA are not satisfied with this data.
+
+```{r}
+# levene test
+leveneTest(EDG ~ Plant, data = power_plant_data, center = "median")
+```
+Because the p-value = 0.040 < $\alpha$ = 0.05, we reject H0 and assume that the variances are not equal.
+
+```{r}
+shapiro.test(residuals(One_way_aov_power_plant ))
+```
+Because the p-value = 2.2 x 10^-12^ < $\alpha$ = 0.05, we reject H0 and can assume that the data is NOT normally distributed.
+
+In conclusions, all of these tests agree that the data is neither normally distributed, nor does it have equal variances.
+
+**D. Because the data are counts of the number of successes for the EDGs, a square root transform may be an alternative to analysis on the original scale. Run the one-way ANOVA after square root transforming EDG. Include the ANOVA table in your assignment.**
+```{r}
+power_plant_data <- power_plant_data %>%
+  mutate(sqrt_EDG = sqrt(EDG))
+
+One_way_aov_power_plant_sqrt <- lm(sqrt_EDG ~ Plant, data = power_plant_data)
+
+anova(One_way_aov_power_plant_sqrt)
+
+```
+
+**E. Do the assumptions for one-way ANOVA appear to be satisfied for after square root transform? In order to justify your response, consider residual diagnostic plots, Levene’s test (using default center = “median”) and Shapiro-Wilk test results. (4 pts)**
+```{r}
+# residual diagnostic plots
+par(mfrow = c(2,2))
+plot(One_way_aov_power_plant_sqrt)
+```
+After the square-root tranfrom, based on the Residuals vs. Fitted, it  appear as if there are equal variances.  The Q-Q plots also show that the residuals are now normally distributed.
+
+```{r}
+# levene test
+leveneTest(sqrt_EDG ~ Plant, data = power_plant_data, center = "median")
+```
+Because the p-value = 0.143 > $\alpha$ = 0.05, we fail to reject H0 and assume that the variances are equal.
+
+```{r}
+shapiro.test(power_plant_data$sqrt_EDG)
+```
+
+Because the p-value = 1.02 x 10^-5^ < $\alpha$ = 0.05, we reject H0 and can assume that the data is NOT normally distributed.
+
+In conclusions, although the residual plots show that the data looks normal and has equal variances after the square root transformation, the Shapiro test shows that the data is not normally distributed. (Levene's agrees with the residual plots - the variances are equal)
+
+**F. Now run the Kruskal-Wallis test on the original scale (not square root transformed). Include the p-value and conclusion in your assignment.**
+```{r}
+kruskal.test(power_plant_data$EDG, power_plant_data$Plant)
+```
+The p-value = 0.051 > 0.05 = $\alpha$, therefore, we fail to reject H0. Therefore, we assume that the groups have identifcal distributions.
+ 
+**G. Use Dunn’s test to run pairwise comparisons after Kruskal-Wallis. Include the pairwise comparisons in your assignment. Which plants show evidence of a difference from plant G at the alpha = 0.05 level? (4pts)**
+```{r}
+dunn.test(x = power_plant_data$EDG, g = power_plant_data$Plant, method = "none")
+```
+E is the only power plant that shows a difference in average EDG output because the p-value for E - G  < 0.05 = $\alpha$. 
+ 
+# Question 2
+
+**Read Problem 9.13 which concerns a weight loss study.**
+
+```{r}
+# tidy data
+# reorder so S (standard is first for Dunnett's comparison)
+
+weight_loss_data <- read.csv("../Data/OTT_Final/ASCII-comma/CH09/ex9-13.txt") %>%
+  rename(A1 = X.A1.,
+         A2 = X.A2.,
+         A3 = X.A3.,
+         A4 = X.A4.,
+         S = X.S.) %>%
+  gather(key = "Trt", value = "Loss") %>%
+  mutate(Trt = as.factor(Trt) )%>%
+ mutate(Trt = fct_relevel(Trt, "S"))
+
+```
+
+
+**A. Calculate a table of summary statistics including sample size, mean, sd and se by Trt group. (4 pts)**
+```{r}
+Sum_stats_weight_loss <- weight_loss_data %>%
+  group_by(Trt) %>%
+  summarise(n  = n(),
+            mean = mean(Loss),
+            sd = sd(Loss),
+            se = sd/sqrt(n)) %>%
+  print()
+```
+
+**B. Run the one-way ANOVA and include the ANOVA table in your assignment. Note: I will not formally ask you to evaluate assumptions for this group of questions but based on the residual diagnostic plots, I think the data looks OK. There does seem to be an outlier for one of the groups.**
+```{r}
+One_way_aov_weight_loss <- lm(Loss ~ Trt, data = weight_loss_data)
+
+anova(One_way_aov_weight_loss)
+```
+
+**C. Calculate unadjusted p-values for pairwise comparisons of means.**
+```{r}
+emmeans(One_way_aov_weight_loss, pairwise ~ Trt, adjust = "none")
+```
+
+**D. Calculate Tukey adjusted p-value for pairwise comparisons of means.**
+```{r}
+# Tukey is done by default
+Tukey_adjust <- emmeans(One_way_aov_weight_loss, pairwise ~ Trt)
+Tukey_adjust
+```
+
+**E. Comparing unadjusted and Tukey adjusted results, how many comparisons yield pvalues less than 0.05? Just count the number of p-values less than 0.05.**
+
+Unadjusted: 8
+
+Tukey Adjusted: 5
+
+**F. Calculate the Tukey HSD0.05 value (95% Tukey ME). In R, use qtukey(0.95, 5, 45) to find the exact table value.**
+
+TukeyME = q_a_(t_df) x sqrt(MSResid/n)
+
+MSResid found in ANOVA table
+```{r}
+qtukey(0.95, 5, 45)*sqrt(0.9824/10)
+```
+The Tukey ME is 1.260
+
+**G. Create a “cld” display with Tukey adjustment.**
+```{r warning = FALSE}
+
+CLD(Tukey_adjust$emmeans)
+```
+
+**H. Calculate Dunnett adjusted p-values to compare each of the “A” treatments versus “S” (standard). Summarize your conclusions from the Dunnett adjusted pairwise comparisons. Which Trts show evidence of differences as compared to the standard at the alpha = 0.05 level? (4pts)**
+```{r}
+emmeans(One_way_aov_weight_loss, dunnett ~ Trt)
+```
+A1, A2, and A4 have p-values < 0.05 causing us to reject H0 and conclude that there is a true difference in means between these treatments and the standard.
