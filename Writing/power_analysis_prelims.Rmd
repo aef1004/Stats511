@@ -98,3 +98,40 @@ mean(361737.3, 114828.3, 43546.3)
 power.anova.test(groups = 4, between.var = 3617370, within.var = 361737, sig.level = 0.05, power = 0.9)
 ```
 
+
+```{r}
+flow_data %>%
+ group_by(Organ, Group) %>%
+  nest() %>%
+  mutate(aov_result = map(data, ~aov(pop_percent ~ Group, data = .x)),
+         tukey_result = map(aov_result, TukeyHSD),
+         tidy_tukey = map(tukey_result, tidy)) %>%
+  unnest(tidy_tukey, .drop = TRUE)
+```
+
+
+Example Data for 1.2
+```{r}
+
+library(ggplot2)
+# Plots 1: Deposition vs. Dose
+
+plot1_data <- data.frame(Group = c(rep("Group1", 5), rep("Group2", 5), rep("Group3",5), rep("Group4", 5)),
+           Deposition = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)))
+
+ggplot(plot1_data, aes(x = Group, y = Deposition, color = Group)) +
+  geom_point() +
+  ggtitle("Example Data: Maternal Plasma Deposition at 24 hours (n = 20)")
+
+# Plots 2: Concentration vs. Time
+
+plot2_data <- data.frame(Timepoint= c(rep(0, 5), rep(24, 5), rep(48,5), rep(7*24, 5), rep(14*24, 5)),
+           Concentration = c(runif(5, 10, 20), runif(5, 20, 50), runif(5, 10, 30), runif(5, 5, 10), runif(5, 0,7)))
+
+
+ggplot(plot2_data, aes(x = Timepoint, y = Concentration, color = Timepoint)) +
+  geom_point() +
+  xlab("Timepoint (hrs)") +
+  ggtitle("Example Data: Maternal Plasma Concentration Over Time (n = 25)")
+```
+
