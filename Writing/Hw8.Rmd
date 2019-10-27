@@ -1,0 +1,160 @@
+---
+title: "Stat 511 Hw8"
+author: "Amy Fox"
+date: "10/27/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Read in the necessary packages
+```{r}
+library(tidyverse)
+```
+
+# Question 1
+
+**Return to the Problem 9.13 data (from HW7) which concerns a weight loss study. For consistency, perform the same “preprocessing” as we did last time.**
+
+```{r}
+# tidy data
+# reorder so S (standard is first for Dunnett's comparison)
+
+weight_loss_data <- read.csv("../Data/OTT_Final/ASCII-comma/CH09/ex9-13.txt") %>%
+  rename(A1 = X.A1.,
+         A2 = X.A2.,
+         A3 = X.A3.,
+         A4 = X.A4.,
+         S = X.S.) %>%
+  gather(key = "Trt", value = "Loss") %>%
+  mutate(Trt = as.factor(Trt) )%>%
+ mutate(Trt = fct_relevel(Trt, "S"))
+
+str(weight_loss_data)
+```
+
+**Use the following additional information about the Trts (called agents in the book):**
+
+**S = Standard** 
+
+**A1 = Drug therapy with exercise and with counseling**
+
+**A2 = Drug therapy with exercise but no counseling**
+
+**A3 = Drug therapy no exercise but with counseling**
+
+**A4 = Drug therapy no exercise and no counseling**
+
+**Estimate and test the following contrasts. You just need to provide the estimate and pvalue for each contrast.**
+
+**A. Compare the mean for the standard agent versus the average of the means for the four other agents.**
+```{r}
+
+```
+
+**B. Compare the mean for the agents with exercise versus those without exercise. (Ignore the standard.)**
+```{r}
+
+```
+
+**C. Compare the mean for the agents with counseling versus those without counseling. (Ignore the standard.)**
+```{r}
+
+```
+
+**D. Compare the mean for the agents with counseling versus the standard.**
+```{r}
+
+```
+
+# Question 2
+
+**Suppose Y is a binomial random variable with n = 22 and π = 0.7. Compute the following.**
+
+**A. Mean and standard deviation of Y.**
+```{r}
+
+```
+
+**B. P(Y ≤ 15)**
+```{r}
+
+```
+
+**C. P(Y < 15)**
+```{r}
+
+```
+
+**D. P(Y = 15)**
+```{r}
+
+```
+
+**E. P(15 ≤ Y < 18)**
+```{r}
+
+```
+
+**F. P(Y ≥ 18)**
+```{r}
+
+```
+
+**G. The normal approximation to P(Y ≥ 18) without continuity correction.**
+```{r}
+
+```
+
+**H. The normal approximation to P(Y ≥ 18) with continuity correction.**
+```{r}
+
+```
+
+
+# Question 3
+
+**Problem 10.14: Many articles have written about the relationship between chronic pain and age of the patient. A survey of a random cross section of 800 adults who suffer from chronic pain found that 424 of them were above age 50. For this question, (1) use large sample normal approximation and (2) do the calculations “by hand”.**
+
+**A. Give an estimate for the proportion of persons suffering from chronic pain that are over 50 years of age.**
+```{r}
+
+```
+
+**B. Give a 95% confidence interval on the proportion of persons suffering from chronic pain that are over 50 years of age.**
+```{r}
+
+```
+
+**C. Using the data in the survey, is there substantial evidence (α = 0.05) that more than half of persons suffering from chronic pain are over 50 years of age? In other words, test H0: π ≤ 0.50 versus HA: π > 0.50. Give the Z statistic, p-value and conclusion. (4 pts)**
+```{r}
+
+```
+
+
+# Question 4
+
+**A factory manager decided to estimate the proportion of defective items. A random sample of 50 items was inspected and it was found that 4 of them are defective.**
+
+**A. Give an estimate for the proportion of defective items.**
+```{r}
+
+```
+
+**B. Using R, calculate a 90% confidence interval for the true proportion of defective items using the normal approximation. NOTES: (1) Use correct = TRUE (default). (2) The R CI will not match a hand calculation for this problem because R uses a different formula.**
+```{r}
+
+```
+
+**C. Using R, calculate a 90% confidence interval for the true proportion of defective items using the exact binomial method.**
+```{r}
+
+```
+
+**D. Is the sample size large enough for the normal approximation to be valid? Justify your response using the criteria discussed in the notes (CH10 slide 23).**
+```{r}
+
+```
+
