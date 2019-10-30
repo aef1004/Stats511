@@ -116,12 +116,20 @@ Example Data for 1.2
 library(ggplot2)
 # Plots 1: Deposition vs. Dose
 
-plot1_data <- data.frame(Group = c(rep("Group1", 5), rep("Group2", 5), rep("Group3",5), rep("Group4", 5)),
+plot1_data <- data.frame(Aerosol_Dose = c(rep("1.4 * 10^4", 5), rep("2.8 * 10^4", 5), rep("7.0 * 10^4",5), rep("1.4 * 10^5", 5)),
            Deposition = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)))
 
-ggplot(plot1_data, aes(x = Group, y = Deposition, color = Group)) +
+library(ggpubr)
+ggplot(plot1_data, aes(x = factor(Aerosol_Dose, levels = c("1.4 * 10^4", "2.8 * 10^4", "7.0 * 10^4", "1.4 * 10^5")), y = Deposition, color = Aerosol_Dose)) +
   geom_point() +
+  xlab("PM Aerosol Dose (particles/cm^3)") +
+  ylab("PM Deposition (particles)") +
   ggtitle("Example Data: Maternal Plasma Deposition at 24 hours (n = 20)")
+
+plot1_data <- data.frame(Aerosol_Dose = c(rep(1.4 * 10^4, 5), rep(2.8 * 10^4, 5), rep(7.0 * 10^4,5), rep(1.4 * 10^5, 5)),
+           Deposition = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)))
+
+cor.test(plot1_data$Aerosol_Dose, plot1_data$Deposition, method = "spearman")
 
 # Plots 2: Concentration vs. Time
 
@@ -132,6 +140,71 @@ plot2_data <- data.frame(Timepoint= c(rep(0, 5), rep(24, 5), rep(48,5), rep(7*24
 ggplot(plot2_data, aes(x = Timepoint, y = Concentration, color = Timepoint)) +
   geom_point() +
   xlab("Timepoint (hrs)") +
+  ylab("Concentration of PM (particles/mL)") +
   ggtitle("Example Data: Maternal Plasma Concentration Over Time (n = 25)")
 ```
+Aim 2.2
+```{r}
+plot2.2_counts <- data.frame(Aerosol_Dose = c(rep("1.4E4", 5), rep("2.8E4", 5), rep("7.0E4",5), rep("1.4E5", 5)),
+`Lymphocytes` = c(runif(5, 2000, 5000), runif(5, 3000,6000), runif(5, 4000, 7000), runif(5, 5000,8000)),
+`B_cells` = c(runif(5, 2000, 5000), runif(5, 3000,6000), runif(5, 4000, 7000), runif(5, 5000,8000)),
+`NK_cells` = c(runif(5, 2000, 5000), runif(5, 3000,6000), runif(5, 4000, 7000), runif(5, 5000,8000)),
+`NKT_cells` = c(runif(5, 2000, 5000), runif(5, 3000,6000), runif(5, 4000, 7000), runif(5, 5000,8000)),
+`Neutrophils` = c(runif(5, 2000, 5000), runif(5, 3000,6000), runif(5, 4000, 7000), runif(5, 5000,8000)),
+`Macrophages` = c(runif(5, 2000, 5000), runif(5, 3000,6000), runif(5, 4000, 7000), runif(5, 5000,8000)),
+`Dendritic_cells` = c(runif(5, 2000, 5000), runif(5, 3000,6000), runif(5, 4000, 7000), runif(5, 5000,8000)),
+`Monocytes` = c(runif(5, 2000, 5000), runif(5, 3000,6000), runif(5, 4000, 7000), runif(5, 5000,8000))) %>%
+  gather(key = "cell_type", value = "count", -Aerosol_Dose) 
+
+ggplot(plot2.2_counts, aes(x = cell_type, y = count, fill = cell_type)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~factor(Aerosol_Dose, levels = c("1.4E4", "2.8E4", "7.0E4", "1.4E5")), nrow = 1) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  xlab("Cell Type") +
+  ylab("Cell Numbers") +
+  ggtitle("Example Data: Pup Lung Cells at 3 weeks")
+
+
+
+
+# pie chart 
+ggplot(plot2.2_counts, aes(x = "", y = count, fill = cell_type)) +
+  geom_bar(stat = "identity") +
+  coord_polar("y", start = 0) 
+```
+
+
+
+Aim 2.3
+
+```{r}
+
+plot2.3_data_cytokines <- data.frame(Aerosol_Dose = c(rep("1.4E4", 5), rep("2.8E4", 5), rep("7.0E4",5), rep("1.4E5", 5)),
+`TNF-alpha` = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)),
+`IL-17` = c(runif(5, 0, 4), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)),
+`IL-1beta` = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)),
+`IL-1alpha` = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)),
+`IFN-gamma` = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)),
+`MCP-1` = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)),
+`MIP-1alpha` = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)),
+`MIP-1beta` = c(runif(5, 0, 3), runif(5, 1, 5), runif(5, 2, 10), runif(5, 10, 50)),
+`IL-10` = c(runif(5, 20, 40), runif(5, 10, 20), runif(5, 2, 7), runif(5, 0, 5)),
+`IL-6` = c(runif(5, 20, 40), runif(5, 10, 20), runif(5, 2, 7), runif(5, 0, 5)),
+`IL-4` = c(runif(5, 20, 40), runif(5, 10, 20), runif(5, 2, 7), runif(5, 0, 5))) %>%
+  gather(key = "cytokine", value = "amount", -Aerosol_Dose) 
+
+library(tidyverse)
+plot2.3_data_cytokines 
+
+library(scales)
+ggplot(plot2.3_data_cytokines, aes(x = factor(Aerosol_Dose, levels = c("1.4E4", "2.8E4", "7.0E4", "1.4E5")), y = amount, fill = cytokine)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~cytokine) +
+  xlab("Aerosol Dose") +
+  ylab("Concentration of Cytokine") +
+  ggtitle("Example Data: Pup Lung Cytokine Concentrations at 3 weeks") +
+  theme(legend.position = "none")
+
+```
+
 
