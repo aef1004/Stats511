@@ -9,9 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+
 ```{r}
 library(stats)
 ```
+
 
 # Aim 1.1
 
@@ -156,6 +159,7 @@ plot2.2_counts <- data.frame(Aerosol_Dose = c(rep("1.4E4", 5), rep("2.8E4", 5), 
 `Monocytes` = c(runif(5, 2000, 5000), runif(5, 3000,6000), runif(5, 4000, 7000), runif(5, 5000,8000))) %>%
   gather(key = "cell_type", value = "count", -Aerosol_Dose) 
 
+# Bar chart with cell numbers and groups
 ggplot(plot2.2_counts, aes(x = cell_type, y = count, fill = cell_type)) +
   geom_bar(stat = "identity") +
   facet_wrap(~factor(Aerosol_Dose, levels = c("1.4E4", "2.8E4", "7.0E4", "1.4E5")), nrow = 1) +
@@ -164,16 +168,53 @@ ggplot(plot2.2_counts, aes(x = cell_type, y = count, fill = cell_type)) +
   ylab("Cell Numbers") +
   ggtitle("Example Data: Pup Lung Cells at 3 weeks")
 
+# Macrophage time series with cell numbers and groups
+plot2.2_time <- plot2.2_counts 
+
+x = runif(1, 2000, 3000)
+y = runif(1, 3000, 4000)
+z = runif(1, 4000, 5000)
+a = runif(1, 5000, 6000)
+
+plot2.2_time <- data.frame(Aerosol_Dose = c(rep("1.4E4", 4), rep("2.8E4", 4), rep("7.0E4",4), rep("1.4E5", 4)), 
+           Time = c(rep(c(0, 3, 5, 8), 4)),
+           Macrophages = c(x, x + runif(1, 1000, 2000), x + runif(1, 2000, 3000), x+runif(1, 3000, 4000),
+                           y, y + runif(1, 1000, 2000), y + runif(1, 2000, 3000), y+runif(1, 3000, 4000),
+                           z, z + runif(1, 1000, 2000), z + runif(1, 2000, 3000), z+runif(1, 3000, 4000),
+                           a, a + runif(1, 1000, 2000), a + runif(1, 2000, 3000), a+runif(1, 3000, 4000)))
 
 
+ggplot(plot2.2_time, aes(x = Time, y = Macrophages, color = factor(Aerosol_Dose, levels = c("1.4E4", "2.8E4", "7.0E4", "1.4E5")))) +
+  geom_point() +
+  geom_line() +
+  labs(color = "Aerosol Dose") +
+  xlab("Time (weeks)") +
+  ylab("Cell Numbers") +
+  ggtitle("Example Data: Pup Lung Macrophages Over Time") 
+
+# correlating with OTU count
+
+plot2.2_diversity <- plot2.2_time %>%
+  mutate(OTU_count = rev(Macrophages))
+
+library(ggpmisc)
+ggplot(plot2.2_diversity, aes(x = OTU_count, y = Macrophages)) +
+  geom_point() +
+  geom_smooth(method = "lm", se= FALSE) +
+   stat_poly_eq(formula = y~x, 
+                aes(label = paste( ..rr.label..)), 
+                parse = TRUE,
+                label.y = .25,
+                label.x = .25) + 
+  xlab("OTU Count") +
+  ylab("Macrophage Cell Numbers") +
+  ggtitle("Example Data: Pup Lung Macrophages vs. Diversity") 
 
 # pie chart 
 ggplot(plot2.2_counts, aes(x = "", y = count, fill = cell_type)) +
   geom_bar(stat = "identity") +
   coord_polar("y", start = 0) 
 ```
-
-
 
 Aim 2.3
 
