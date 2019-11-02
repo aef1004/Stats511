@@ -249,3 +249,31 @@ ggplot(plot2.3_data_cytokines, aes(x = factor(Aerosol_Dose, levels = c("1.4E4", 
 ```
 
 
+Caging
+```{r}
+Number of particles needed
+1.4*10^5 * 10^6 * 2*4
+
+```
+
+Sizing for slide count in mm
+```{r}
+
+GA = c(7.5, 8.5, 9.5, 14.5)
+
+# Abdominal circumference
+AC = -55.75 + 7.52*GA - 0.166*GA^2
+
+# Placental diameter
+PD = -11.96 + 2.09*GA - 0.046*GA^2 - 0.0005*GA^3
+
+# Placental thickness (PT)
+PT = 4.1 - 1.14*GA + 0.115*GA^2 - 0.0031*GA^3
+
+GA = c(7.5, 8.5, 9.5, 14.5)
+
+data.frame(GA, AC, PT)
+
+18.4/2/3.14
+```
+
