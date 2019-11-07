@@ -1,0 +1,142 @@
+---
+title: "Stat511 Hw9"
+author: "Amy Fox"
+date: "11/7/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1
+ **This is question 10.21 from Ott & Longnecker 7 th Edition. The toxicity of two sludge fertilizer treatments are compared. One hundred tomato plants were randomly assigned to pots containing sludge processed by either the “new” or “old” treatment. The tomatoes harvested from the plants were evaluated to determine if the nickel was at a toxic level. Let πNew be the true population proportion of all plants treated with the “New” treatment that will be toxic and let πOld be the true population proportion of all plants treated with the “Old” treatment that will be toxic. For the tests considered in parts B,C and E below we will test H0: πNew - πOld = 0.**
+ 
+   Toxic Non-Toxic Total
+New 5 45 50
+Old 9 41 50
+Total 14 86 100
+
+
+**A. Calculate the estimated proportion of toxic plants for EACH treatment.**
+```{r}
+# New treatment toxic
+5/50
+
+# Old treatment toxic
+9/50
+```
+
+**B. Use the two-sample Z test (prop.test function in R) to compare the proportion of Toxic plants for the two treatments. Use correct = TRUE (default). Give your (chi-square) test statistic and p-value.**
+```{r}
+
+toxic_matrix <- matrix(c(5, 45, 9, 41), byrow = TRUE, nrow = 2)
+colnames(toxic_matrix) <- c("Toxic", "Non-toxic")
+rownames(toxic_matrix) <- c("New", "Old")
+
+prop.test(toxic_matrix, correct = TRUE)
+```
+
+Chi-square test statistic: 0.74751
+p-value: 0.3873
+
+
+**C. Use the chi-square test for contingency tables (chisq.test function in R) to compare the proportion of Toxic plants for the two treatments. Use correct = TRUE (default). Give your test statistic and p-value. Note: You should find that these results exactly match the results above.**
+```{r}
+chisq.test(toxic_matrix, correct = TRUE)
+```
+Test statitic: 0.74751
+p-value = 0.3873
+
+**D. Calculate the expected cell counts from the chi-square test.**
+```{r}
+prop.table(toxic_matrix)
+```
+**??? IS this what she means??**
+
+**E. Use Fisher’s exact test (fisher.test function in R) to compare the proportion of Toxic plants for the two treatments. Give the resulting p-value.**
+```{r}
+fisher.test(toxic_matrix)
+```
+p-value: 0.3881
+
+**F. Considering the expected cell counts from part D above, is the chi-square test or fisher’s exact test preferred for this data. Justify your choice.**
+```{r}
+
+```
+
+**G. The “New” treatment would be preferred if it can be shown to reduce toxicity. Hence a one-side alternative could be justified here. A benefit of the two-sample Z test is that it lends itself more easily to a one-sided alternative. Use prop.test to test H0: πNew - πOld ≥ 0 versus HA: πNew - πOld < 0. Give the resulting one-sided p-value.**
+```{r}
+prop.test(toxic_matrix, alternative = "less", correct = TRUE)
+```
+p-value: 0.1936
+
+# Question 2
+
+**This is question 10.69 from Ott and Longnecker 7th Edition. A study was conducted to compare two anesthetic drugs for use in minor surgery using n = 45 men who were similar in age and physical condition. The two drugs were applied on the right and left ankles of each patient, and after a fixed period of time, the doctor recorded whether or not the ankle remained anesthetized.**
+
+Drug B Yes Drug B No Total
+Drug A Yes 12 10 22
+Drug A No 9 14 23
+Total 21 24 45
+
+**A. Calculate the estimated proportion that remain anesthetized (Yes) for EACH Drug. Note the data formatting.**
+```{r}
+# Drug A Yes
+22/45
+
+# Drug B Yes
+21/45
+```
+
+**B. Considering the design, run an appropriate test comparing the effectiveness of the two drugs. State the name of the test, test statistic and p-value. (4 pts)**
+
+McNemar's test should be used because the data is paired
+```{r}
+drug_matrix <- matrix(c(12, 10, 9, 14), byrow = TRUE, nrow = 2)
+colnames(drug_matrix) <- c("Drug B Yes", "Drug B No")
+rownames(drug_matrix) <- c("Drug A Yes", "Drug A No")
+
+mcnemar.test(drug_matrix)
+```
+Test name: McNemar's 
+Test statistic: 0
+p-value: 1
+
+# Question 3
+
+**A case-control study in Berlin, reported by Kohlmeier, Arminger, Bartolomeycik, Bellach, Rehm and Thamm (1992) and by Hand et al. (1994) asked 239 lung cancer patients and 429 healthy controls (matched to the cases by age and sex) whether or not they had kept a pet bird during adulthood. The data is summarized below:**
+
+Healthy Controls Cancer Patients Total
+No Bird 328 141 469
+Bird 101 98 199
+Total 429 239 668
+
+**A. Estimate the odds ratio (of “Cancer” versus “Control”) for the “Bird” versus “No Bird” groups. Does the Bird or No Bird group have higher odds of lung cancer?**
+```{r}
+# odds of cancer in Bird group/odds of cancer in no bird group
+(98/199)/(101/199) / (141/469)/(328/469)
+
+```
+Odds of getting cancer in the bird group is 4.6x the odds of getting cancer in the no bird group.
+
+**B. Give a 95% confidence interval for the odds ratio. Based on this interval, can you conclude that there is a relationship between bird ownership and lung cancer? NOTE: Use method=”wald”. (4 pts)**
+```{r}
+library(epitools)
+
+bird_cancer <- matrix(c(328,141, 101, 98), byrow = TRUE, nrow = 2)
+colnames(bird_cancer) <- c("Healthy", "Cancer")
+rownames(bird_cancer) <- c("No Bird", "Bird")
+
+oddsratio(bird_cancer, method = "wald")
+```
+**NEED to answer quesiton**
+
+
+**C. Run the chi-square test for this data. Give the p-value and conclusion.** 
+```{r}
+chisq.test(bird_cancer)
+```
+p-value: 0.345 x 10^-6^
+
+As the p-value < $\alpha$ = 0.05, we reject H0 and conclude that the row and column variables are dependent (associated)
