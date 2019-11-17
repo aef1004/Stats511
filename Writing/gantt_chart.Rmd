@@ -1,0 +1,33 @@
+---
+title: "Gantt Chart"
+author: "Amy Fox"
+date: "11/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(vistime)
+
+dat <- data.frame(Position=c(rep("President", 3), rep("Vice", 3)),
+              Name = c("Washington", "Adams", "Jefferson", "Adams", "Jefferson", "Burr"),
+              start = rep(c("1789-03-29", "1797-02-03", "1801-02-03"), 2),
+              end = rep(c("1797-02-03", "1801-02-03", "1809-02-03"), 2),
+              color = c('#cbb69d', '#603913', '#c69c6e'),
+              fontcolor = rep("white", 3))
+dat
+vistime(dat, events="Position", groups="Name", title="Presidents of the USA")
+
+
+gantt <- data.frame(Position = c("Submit Scientific Reports", "GlobeImmune", "Esx5", "Analyze sequencing", "Outline", "Cyto-feature chapter RD", "Lit Review", "Website"),
+           Task = c("Cyto-feature Manuscript", "Aim 1 Analysis", "Aim 1 Analysis", "Skill Acquisition", "Dissertation", "Dissertation", "Dissertation", "Skill Acquisition"),
+           Start = c("2019-11-18", "2019-11-18", "2019-12-2", "2020-1-15", "2019-12-2", "2020-1-15", "2020-1-30", "2019-12-8"),
+           Finish = c("2019-11-23", "2019-11-23", "2019-12-7", "2020-1-22", "2019-12-7", "2020-1-30", "2020-2-14", "2019-12-15"),
+           color = c("pink", "blue", "green", "lightblue", "lightgreen", "purple", "pink", "lightpurple"))
+
+vistime(gantt, events = "Position", groups = "Task", start = "Start", end = "Finish", title = "PhD Completion")
+```
+
