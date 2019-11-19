@@ -22,11 +22,11 @@ dat
 vistime(dat, events="Position", groups="Name", title="Presidents of the USA")
 
 
-gantt <- data.frame(Position = c("Submit Scientific Reports", "GlobeImmune", "Esx5", "Analyze sequencing", "Outline", "Cyto-feature chapter RD", "Lit Review", "Website"),
-           Task = c("Cyto-feature Manuscript", "Aim 1 Analysis", "Aim 1 Analysis", "Skill Acquisition", "Dissertation", "Dissertation", "Dissertation", "Skill Acquisition"),
-           Start = c("2019-11-18", "2019-11-18", "2019-12-2", "2020-1-15", "2019-12-2", "2020-1-15", "2020-1-30", "2019-12-8"),
-           Finish = c("2019-11-23", "2019-11-23", "2019-12-7", "2020-1-22", "2019-12-7", "2020-1-30", "2020-2-14", "2019-12-15"),
-           color = c("pink", "blue", "green", "lightblue", "lightgreen", "purple", "pink", "lightpurple"))
+gantt <- data.frame(Position = c("Submit Scientific Reports", "GlobeImmune", "Esx5", "Analyze sequencing", "Outline", "Cyto-feature chapter RD", "Lit Review", "Website", "LinkedIn", "CV", "Rv1411c Myeloid", "Plan CCR2 experiment", "CCR2 experiment", "Plan populations", "Order mice"),
+           Task = c("Cyto-feature Manuscript", "Aim 1 Analysis", "Aim 1 Analysis", "Skill Acquisition", "Dissertation", "Dissertation", "Dissertation", "Skill Acquisition", "Career Development", "Career Development", "Aim 1 Analysis", "Lab Experiments", "Lab Experiments", "Lab Experiments", "Lab Experiments"),
+           Start = c("2019-11-18", "2019-11-18", "2019-12-2", "2020-1-15", "2019-12-2", "2020-1-15", "2020-1-30", "2019-12-8", "2019-12-8", "2020-1-17", "2019-12-8", "2019-11-19", "2019-12-2", "2020-1-16", "2020-1-19"),
+           Finish = c("2019-11-23", "2019-11-23", "2019-12-7", "2020-1-22", "2019-12-7", "2020-1-30", "2020-2-14", "2019-12-15", "2019-12-15", "2020-1-24", "2019-12-15", "2019-11-25", "2019-12-14", "2020-1-22", "2020-1-20"),
+           color = c("pink", "blue", "green", "lightblue", "lightgreen", "purple", "pink", "lightpurple", "lightpink", "lightblue", "yellow", "orange", "yellow", "hotpink", "blue"))
 
 vistime(gantt, events = "Position", groups = "Task", start = "Start", end = "Finish", title = "PhD Completion")
 ```
