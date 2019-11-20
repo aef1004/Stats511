@@ -2,7 +2,9 @@
 title: "Stat511 Hw10"
 author: "Amy Fox"
 date: "11/19/2019"
-output: html_document
+output:
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,10 +14,24 @@ knitr::opts_chunk$set(echo = TRUE)
 # Question 1
 **Bacillus Calmette-Guerin (BCG) is a vaccine for preventing tuberculosis. For this question, we will examine data from 3 studies (Vandiviere et al 1973, TPT Madras 1980, Coetzee & Berjak 1968). The data is summarized below.**
 
-**A. Calculate the odds ratio (corresponding to TBpos for Trt vs Ctrl) for each study separately. (4 pts)**
+**A. Calculate the odds ratio (corresponding to TB_pos for Trt vs Ctrl) for each study separately. (4 pts)**
 ```{r}
+library(lawstat)
+BCG_response <- array(c(619, 2537, 10, 8,
+        87892, 87886, 499, 505,
+        7232, 7470, 45, 29),
+      dim = c(2, 2, 3),
+      dimnames = list(Treatment = c("Ctrl", "Trt"),
+                      Response = c("TB_neg", "TB_pos"),
+                      Study = c("1", "2", "3")))
 
+cmh.test(BCG_response)
 ```
+OR Study 1: 0.19519
+
+OR Study 2: 1.01210
+
+OR Study 3: 0.62391
 
 **B. Use the Breslow-Day test to test for equality of odds ratios across the 3 studies. State your p-value and conclusion. Can we conclude that the odds ratios are equal across the 3 studies? Based on this test, should be combine information across studies? (4 pts)**
 
@@ -23,46 +39,118 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **The most controversial aspect of BCG is the variable efficacy found in different clinical trials that appears to depend on geography. Trials conducted in the UK have consistently shown a protective effect of 60 to 80%, but those conducted elsewhere have shown no protective effect, and efficacy appears to fall the closer one gets to the equator.**
 
-```{r}
+```{r warning = FALSE, message = FALSE}
+library(metafor)
+cmh_bd_BCG <- rma.mh(ai = BCG_response[1, 1, ], bi =  BCG_response[1, 2, ],
+       ci = BCG_response[2, 1, ], di = BCG_response[2, 2, ])
 
+p_value <- cmh_bd_BCG$BDp
 ```
+p-value = `r p_value`
 
+Because the p-value is less than $\alpha$ = 0.05, we reject H0 and assume that the odds ratios are not equal across the 3 studies. Therefore, we should not combine information across studies.
 
 # Question 2
 
 **Problem 10.36 involves bomb hits during WWII. Bomb hits were recorded in n = 576 grids in a map of a region of South London.**
 
-**A. Find the sample mean (𝜇̂) bomb hits per grid.**
+**A. Find the sample mean  ($\hat{\mu}$) bomb hits per grid.**
 ```{r}
+bomb_hits = c(0, 1, 2, 3, 4) # Y aka events
+grids = c(229, 211, 93, 35, 8) # obs aka number of events aka units
+
+cbind(bomb_hits, grids)
+
+mu_hat <- sum(bomb_hits*grids)/sum(grids)
 
 ```
+Sample mean: `r mu_hat`
 
-**B. Use the GOF test to test whether the number of bomb hits per grid follows the Poisson distribution. Calculate the GOF test statistic, df, p-value and give a conclusion using α = 0.05. (6 pts)**
+
+**B. Use the GOF test to test whether the number of bomb hits per grid follows the Poisson distribution. Calculate the GOF test statistic, df, p-value and give a conclusion using $\alpha$ = 0.05. (6 pts)**
 ```{r}
+# calculate Poisson probability
+pois_dist <- dpois(bomb_hits, mu_hat)
 
+# change so that the poisson adds up to 1
+sum_pois <- sum(pois_dist)
+pois_dist[5] <- 1-sum(pois_dist[1:4])
+
+# expected values
+Exp <- pois_dist*576
+
+# contributions of Chi-squared
+X2 <- (grids-Exp)^2/Exp
+
+cbind(bomb_hits, grids, pois_dist, Exp, X2)
+
+Chi_Sq_TS <- sum(X2)
+
+
+df = 5-2
+pval <- 1-pchisq(Chi_Sq_TS, df)
+pval
 ```
 
+GOF Test statistic: `r Chi_Sq_TS`
+
+df: `r df`
+
+p-value: `r pval`
+
+Because the p-value > $\alpha$ = 0.05, we fail to reject H0 and conclude that there is no evidence against Poisson
 
 # Question 3
 **The data “PoissonData.csv” gives observations Y (counts or events) for n = 50 (units) generated from the Poisson distribution (using the rpoiss() function).**
 
 **A. Calculate the sample mean and sample standard deviation. Also construct a histogram and qqplot of the data and include them in your assignment. (4 pts)**
 
-**NOTE: Because the data comes from the Poisson distribution, you should find that the mean and the sample variance (s2) are close. However, you should also find from the histogram and qqplot that the data looks approximately normal.**
+**NOTE: Because the data comes from the Poisson distribution, you should find that the mean and the sample variance (s^2^) are close. However, you should also find from the histogram and qqplot that the data looks approximately normal.**
 ```{r}
+
+library(ggplot2)
+poisson_data <- read.csv("../Data/PoissonData.csv")
+
+# mean
+poisson_mean <- mean(poisson_data$Y)
+
+# standard deviation
+poisson_sd <- sd(poisson_data$Y)
+
+# histogram
+ggplot(poisson_data, aes(Y)) +
+  geom_histogram(fill = "pink", bins = 7) +
+  ggtitle("Poisson Distribution")
+
+# qqplot
+qqnorm(poisson_data$Y, main = "QQplot of Poisson Distribution"); qqline(poisson_data$Y)
 
 ```
 
+The mean is `r poisson_mean`.
 
-**B. Give a standard t-based 95% confidence interval for μ.**
+The standard deviations is `r poisson_sd`.
+
+Based on the histogram and qqplot, the data looks pretty normal. 
+
+**B. Give a standard t-based 95% confidence interval for $\mu$.**
 ```{r}
-
+t.test(poisson_data$Y)
 ```
+CI: (46.591, 50.46675)
 
-**C. Following the example on CH10 Slide 106 (Death by Mule Kick CI), construct a 95% confidence interval for μ based on the normal approximation to the Poisson distribution. (4 pts) In order to do this, you will start by constructing a CI on the total number of events, then divide by the number of units.**
+**C. Following the example on CH10 Slide 106 (Death by Mule Kick CI), construct a 95% confidence interval for $\mu$ based on the normal approximation to the Poisson distribution. (4 pts) In order to do this, you will start by constructing a CI on the total number of events, then divide by the number of units.**
 
 **NOTE: The CIs from parts B and C should be similar.**
-```{r}
 
+$$y \pm z_{0.025} * sd / \sqrt{n}$$
+```{r}
+y = mean(poisson_data$Y) 
+s = sd(poisson_data$Y)
+
+CI_low <- (y - (1.96*s/sqrt(50)))
+
+CI_high <- (y + (1.96*s/sqrt(50)))
 ```
 
+CI: (`r CI_low`, `r CI_high`) 
