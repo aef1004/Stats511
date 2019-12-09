@@ -9,66 +9,112 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Read in packages
+```{r message = FALSE}
+library(readr)
+library(tidyverse)
+```
+
+
 # Question 1
 
 **Review problem 11.22 from Ott & Longnecker regarding treadmill “time to exhaustion” (X) and 10km race times (Y).**
 
 **A. Regress 10.K (Y) on Treadmill (X) and include the “summary” information in your assignment.**
 ```{r}
+treadmill <- read.csv("../Data/OTT_Final/ASCII-comma/CH11/ex11-22.txt") %>%
+  rename(`Treadmill` = 'X.Treadmill.',
+         `10K` = `X.10.K.`)
 
+treadmill_fit <- lm(`10K` ~ `Treadmill`, data = treadmill)
+summary(treadmill_fit)
 ```
 
 **B. Create a scatterplot of 10-K vs Treadmill with fitted regression line overlaid.**
 ```{r}
-
+plot(`10K` ~ `Treadmill`, data = treadmill, main = "10K vs. Treadmill with regression line")
+abline(lm(`10K` ~ `Treadmill`, data = treadmill))
 ```
 
 **C. Give the estimate, 95% confidence interval and interpretation of the slope. (4 pts)**
-```{r}
 
+```{r}
+confint(treadmill_fit, level = 0.95)
 ```
+Slope estimate: -1.96
+
+95% CI for slope: (-2.62, -1.30)
+
+Slope interpretation: As the time to exhaustion (Treadmill) increases by 1, the race time (10K) decreases by 1.96.
 
 **D. Give the R2 value and interpretation in terms of this scenario.**
-```{r}
 
-```
+R2: 0.6807
+
+In this case, 68% of the variability in the race time (10K) is explained by the linear regression on the time to exhaustion (Treamill)
 
 **E. Give the predicted 10.K time for a runner with Treadmill = 11. Also provide a corresponding prediction interval.**
 ```{r}
-
+predict(treadmill_fit, data.frame(Treadmill = 11), interval = "predict")
 ```
+The predicted 10K time is 38.36.
+
+Prediction interval: (34.14, 42.58)
 
 **F. Create the plots of (1) residuals vs fitted values and (2) qqplot of residuals**
 ```{r}
-
+par(mfrow = c(2,2))
+plot(treadmill_fit)
 ```
 
-**G. Based on the plots above, subject 13 appears to be a bit of an outlier. Run a formal outlier test for this observation. Provide the p-value and make a conclusion. Note that since we identified this observation after looking at the data, a Bonferonni adjustment is appropriate.
-2. Data on age in coating Thickness (X) and Strength (Y) from an experiment involving steel are available from Canvas as Steel.csv.**
-```{r}
-
+**G. Based on the plots above, subject 13 appears to be a bit of an outlier. Run a formal outlier test for this observation. Provide the p-value and make a conclusion. Note that since we identified this observation after looking at the data, a Bonferonni adjustment is appropriate.**
+```{r message = FALSE}
+library(car)
+outlierTest(treadmill_fit)
 ```
+Bonferroni p-value: 0.188
+
+Because the p-value is > 0.0.5, we fail to reject H0 and cannot conclude that subject 13 is an outlier.
 
 # Question 2
+**Data on age in coating Thickness (X) and Strength (Y) from an experiment involving steel are available from Canvas as Steel.csv.**
+```{r message = FALSE}
+steel <- read_csv("../Data/Steel.csv")
+```
 
 **A. Regress Strength (Y) against Thick (X) and look at (1) the plot of Strength versus Thick (2) residuals versus predicted values and (3) qqplot of residuals. Include these plots in your assignment. Do the regression assumptions appear to be met? Discuss. (4 pts)**
 ```{r}
+steel_fit <- lm(`Strength` ~ `Thick`, data = steel)
+
+plot(`Strength` ~ `Thick`, data = steel)
+abline(steel_fit)
+
+par(mfrow = c(2,2))
+plot(steel_fit)
 
 ```
+While the QQ-plot of the residuals looks mostly okay (aka linear), the Residuals v. Fitted does not appear to show equal scatter (equal variance). The regressed plot is supposed to show a linear trend- it looks kind of okay, but not great.
+
 
 **B. Perform an F-test for “lack of fit”. Give your p-value and make a conclusion. (4 pts)**
 ```{r}
+anova_steel_fit <- lm(`Strength` ~ as.factor(`Thick`), data = steel)
 
+anova(steel_fit, anova_steel_fit)
 ```
+p-value: 0.01195
+
+Conclusion: Because the p-value < 0.05, we reject H0 and assume there there is evidence for lack of fit for the steel regression.
+
 
 **C. Now perform a quadratic regression and create a scatterplot with the fitted curve overlaid. Include the “summary” table and plot in your assignment. This can be done with code like the following. (4 pts)**
 
 **Note that b0,b1,b2 need to be replaced with estimates from the quadratic regression.**
 ```{r}
-QFit <- lm(Strength ~ Thick + I(Thick^2), data = Steel)
+QFit <- lm(Strength ~ Thick + I(Thick^2), data = steel)
 summary(QFit)
-plot(Strength ~ Thick, data = Steel)
-curve(b0 + b1*x + b2*x^2, add = TRUE)
+plot(Strength ~ Thick, data = steel)
+curve(14.5 + 0.04318*x + -5.994e-5*x^2, add = TRUE)
 ```
 
 # Question 3
@@ -76,17 +122,31 @@ curve(b0 + b1*x + b2*x^2, add = TRUE)
 **Review problem 11.50 from Ott & Longnecker regarding SAT Scores.** 
 
 **A. Create pairwise scatterplots for all 4 variables (Male.Verbal, Female.Verbal, Male.Math, Female.Math)**
-```{r}
+```{r message = FALSE}
+SAT_scores <- read_csv("../Data/OTT_Final/ASCII-comma/CH11/ex11-50.txt") %>%
+  column_to_rownames("'Gender/Type'")
 
+pairs(SAT_scores)
 ```
 
 **B. Calculate pairwise (Pearson) correlations for all 4 variables. Which pair of variables has the strongest correlation? (4 pts)**
 ```{r}
-
+cor(SAT_scores)
 ```
+The strongest correlation is Female/Math with Male/Math.
 
 **C. Provide a test of the correlation for Female.Verbal vs Female.Math. Give the p-value and conclusion in your assignment.**
 ```{r}
-
+cor.test(SAT_scores$"'Female/Verbal'", SAT_scores$"'Female/Math'")
 ```
 
+p-value: 0.1317
+
+Conclusion: Because the p-value > 0.194, we fail to reject H0 and assume that there is no correlation between the two groups (aka the true correlation may be 0)
+
+Note: if the data is non-normal, we can add in method = "spearman"
+
+```{r}
+cor.test(SAT_scores$"'Female/Verbal'", SAT_scores$"'Female/Math'", method = "spearman")
+```
+In this case, the p-value is 0.194 and has the same conclusion as the pearson correlation above.
