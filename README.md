@@ -2,12 +2,12 @@
 
 This repo contains all of the R-homework that I completed for STAT511 - Design and Data Analysis for Researchers: R Software.
 
-Topics covered in the class
+## Topics covered in the class
 
-1. Terminology and collecting data (Chapters 1-2)
-2. Data description and probability distributions (Chapters 3-4)
-3. Inferences about population central values (Chapter 5)
-4. Comparing two population central values (Chapter 6)
+### 1. Terminology and collecting data (Chapters 1-2)
+### 2. Data description and probability distributions (Chapters 3-4)
+### 3. Inferences about population central values (Chapter 5)
+### 4. Comparing two population central values (Chapter 6)
 
  - Two-sample t-test and confidence intervals (equal variances)
  - Welch-Satterthwaite t-test and confidence intervals (unequal variances)
@@ -17,12 +17,12 @@ Topics covered in the class
  - Wilcoxon Signed Rank (Paired sample) test
  - Bootstrap two-sample t confidence interval
 
-5. Inferences about population variances (Chapter 7)
+### 5. Inferences about population variances (Chapter 7)
 
  - Studying standard deviation for a single population
  - Comparing two standard deviations
  
-6. Inferences about more than two population central values (Chapter 8)
+### 6. Inferences about more than two population central values (Chapter 8)
 
  - ANOVA model
  - ANOVA table and F-test
@@ -32,7 +32,7 @@ Topics covered in the class
  - Transformations for One Way ANOVA
  - Power of a One-Way Model (Overall F-test)
  
-7. Multiple comparisons (Chapter 9)
+### 7. Multiple comparisons (Chapter 9)
 
  - Multiple Testing Problem
  - Tukey's HSD Methtod for Pairwise Comparisons
@@ -43,7 +43,7 @@ Topics covered in the class
  - Other multiple testing methods (including FDR)
  - Linear contrasts
  
-8. Categorical data analysis (Chapters 10 & 4)
+### 8. Categorical data analysis (Chapters 10 & 4)
 
  - Binomial Random Variables
  - Inference for a single proportion
@@ -55,7 +55,7 @@ Topics covered in the class
  - Breslow-Day and Mantel-Haenszel Tests
  - Poisson distribution
  
-9. Linear regression and correlation (Chapter 11)
+### 9. Linear regression and correlation (Chapter 11)
 
  - Simple Linear Regression
  - Fitted Regression Line
@@ -65,7 +65,7 @@ Topics covered in the class
  - F-test for "lack of fit"
  - Adding quadratic terms
  
-10. Logistic regression and additional topics (Chapter 12)
+### 10. Logistic regression and additional topics (Chapter 12)
 
 - Nonlinear regression
 - Logistic regression
